@@ -40,7 +40,8 @@ public class AdvancedNameParser implements ProxyParser {
             Thread.sleep((int) (Math.random() * 2000) + 500);
             Document doc = getDocument(url);
             Elements tableRows = getTableRows(doc);
-            if (tableRows.isEmpty()) break;
+//            if (tableRows.isEmpty()) break;
+            if (i > 5) break;
             urlsToParse.add(url);
         }
         } catch (IOException | InterruptedException ex) {
