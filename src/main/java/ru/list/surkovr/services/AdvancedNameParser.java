@@ -37,7 +37,7 @@ public class AdvancedNameParser implements ProxyParser {
         try {
             int i = 0;
             while (true) {
-                if (i++ > 5) break;
+                if (i++ > 2) break;
                 String url = rootUrl + "?page=" + i;
                 System.out.println("=====> ПАРСИМ " + url);
                 Thread.sleep((int) (Math.random() * 2000) + 500);
@@ -58,8 +58,8 @@ public class AdvancedNameParser implements ProxyParser {
                 Thread.sleep((int) (Math.random() * 2000) + 500);
                 Document doc = getDocument(urlsToParse.poll());
                 Elements tableRows = getTableRows(doc);
-                Set<Proxy> temp = getProxies(tableRows);
-                proxies.addAll(temp);
+                Set<Proxy> tempSet = getProxies(tableRows);
+                proxies.addAll(tempSet);
             }
             return proxies;
         } catch (IOException | InterruptedException ex) {
@@ -69,14 +69,27 @@ public class AdvancedNameParser implements ProxyParser {
     }
 
     private Document getDocument(String url) throws IOException {
-        WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        WebClient webClient = initializeClient();
+        try {
+            HtmlPage htmlPage = webClient.getPage(url);
+            String html = htmlPage.asXml();
+            htmlPage.cleanUp();
+            return Jsoup.parse(html);
+        } finally {
+            webClient.getCurrentWindow().getJobManager().removeAllJobs();
+            webClient.close();
+            System.gc();
+        }
+    }
+
+    private WebClient initializeClient() {
+        final WebClient webClient = new WebClient(BrowserVersion.CHROME);
+        webClient.getOptions().setPrintContentOnFailingStatusCode(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        HtmlPage htmlPage = webClient.getPage(url);
-        String html = htmlPage.asXml();
-        htmlPage.cleanUp();
-        webClient.close();
-        return Jsoup.parse(html);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setCssEnabled(false);
+        return webClient;
     }
 
     private Set<Proxy> getProxies(Elements tableRows) {
