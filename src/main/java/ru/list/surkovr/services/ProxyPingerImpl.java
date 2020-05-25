@@ -23,8 +23,7 @@ public class ProxyPingerImpl implements ProxyPinger {
 
     @Override
     public Set<Proxy> checkProxies(Set<Proxy> proxies) {
-        ExecutorService executorService = Executors.newFixedThreadPool(
-                Runtime.getRuntime().availableProcessors() - 2);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         proxyQueue = new ConcurrentLinkedQueue<>();
         resultProxies = new ConcurrentLinkedQueue<>();
         proxyQueue.addAll(proxies);
@@ -69,6 +68,7 @@ public class ProxyPingerImpl implements ProxyPinger {
             String s = "";
             while ((s = inputStream.readLine()) != null) builder.append(s);
             String res = builder.toString().trim();
+            inputStream.close();
             return res.substring(res.length() - 7, res.length() - 2)
                     .replaceAll("=", "").trim();
         } catch (Exception e) {

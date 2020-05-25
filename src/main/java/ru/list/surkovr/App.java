@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 // TODO: сделать десктоп версию
 // TODO: оптимизировать сбор ссылок (дважды получаем страницы - для заполнения очереди ссылок и для парсинга
 // TODO: Заменить библиотеку HtmlUnit на менее строгую
+// TODO: Сделать фильтр пинга - добавлять только после первичного замера пинга, "0" заменить
 
 @SpringBootApplication()
 public class App {

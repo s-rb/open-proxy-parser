@@ -11,9 +11,7 @@ import ru.list.surkovr.services.interfaces.ProxyService;
 import ru.list.surkovr.util.Util;
 
 import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -55,7 +53,9 @@ public class ProxyServiceImpl implements ProxyService {
 
     private Set<Proxy> getFilteredProxies(Predicate<? super Proxy> predicate) {
         return Collections.unmodifiableSet(proxies).parallelStream()
-                .filter(predicate).collect(Collectors.toSet());
+                .filter(predicate)
+                .sorted((p1, p2) -> p2.getTimeout() != 0 ? p1.getTimeout() - p2.getTimeout() : -1)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @PostConstruct

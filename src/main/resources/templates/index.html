@@ -30,7 +30,11 @@
             <td th:text="${prox.getPort()}"/>
             <td th:text="${prox.getTimeout()}"/>
             <td>
-                <a th:each="proxType : ${prox.getTypes()}" class="btn btn-primary" type="button"><p th:text="${proxType.toString()}"></p></a>
+                <button th:each="proxType : ${prox.getTypes()}"
+                        class="btn btn-outline-primary" type="button"
+                        th:text="${proxType.toString()}">
+
+                </button>
             </td>
         </tr>
         </tbody>
