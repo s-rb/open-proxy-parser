@@ -37,7 +37,7 @@ public class AdvancedNameParser implements ProxyParser {
         try {
             int i = 0;
             while (true) {
-                if (i++ > 2) break;
+                if (i++ > 6) break;
                 String url = rootUrl + "?page=" + i;
                 System.out.println("=====> ПАРСИМ " + url);
                 Thread.sleep((int) (Math.random() * 2000) + 500);
