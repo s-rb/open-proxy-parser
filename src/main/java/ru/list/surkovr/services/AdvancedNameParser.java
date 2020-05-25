@@ -7,21 +7,23 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
-import ru.list.surkovr.util.Util;
 import ru.list.surkovr.model.Proxy;
 import ru.list.surkovr.model.ProxyType;
 import ru.list.surkovr.services.interfaces.ProxyParser;
+import ru.list.surkovr.util.Util;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 // https://advanced.name/ru/freeproxy?page=1
 @Component
 public class AdvancedNameParser implements ProxyParser {
 
-    private Queue<String> urlsToParse = new LinkedList<>();
+    private final Queue<String> urlsToParse = new LinkedList<>();
 
     public Set<Proxy> parseProxies(String url) {
         findAllUrls(url);
@@ -33,17 +35,17 @@ public class AdvancedNameParser implements ProxyParser {
 
     private void findAllUrls(String rootUrl) {
         try {
-        int i = 1;
-        while (true) {
-            String url = rootUrl + "?page=" + i++;
-            System.out.println("=====> ПАРСИМ " + url);
-            Thread.sleep((int) (Math.random() * 2000) + 500);
-            Document doc = getDocument(url);
-            Elements tableRows = getTableRows(doc);
-//            if (tableRows.isEmpty()) break;
-            if (i > 5) break;
-            urlsToParse.add(url);
-        }
+            int i = 0;
+            while (true) {
+                if (i++ > 5) break;
+                String url = rootUrl + "?page=" + i;
+                System.out.println("=====> ПАРСИМ " + url);
+                Thread.sleep((int) (Math.random() * 2000) + 500);
+                Document doc = getDocument(url);
+                Elements tableRows = getTableRows(doc);
+                if (tableRows.isEmpty()) break;
+                urlsToParse.add(url);
+            }
         } catch (IOException | InterruptedException ex) {
             ex.printStackTrace();
         }
@@ -69,8 +71,12 @@ public class AdvancedNameParser implements ProxyParser {
     private Document getDocument(String url) throws IOException {
         WebClient webClient = new WebClient(BrowserVersion.INTERNET_EXPLORER);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         HtmlPage htmlPage = webClient.getPage(url);
-        return Jsoup.parse(htmlPage.asXml());
+        String html = htmlPage.asXml();
+        htmlPage.cleanUp();
+        webClient.close();
+        return Jsoup.parse(html);
     }
 
     private Set<Proxy> getProxies(Elements tableRows) {
@@ -78,7 +84,7 @@ public class AdvancedNameParser implements ProxyParser {
         for (int i = 0; i < tableRows.size(); i++) {
             Element row = tableRows.get(i);
             Elements columns = row.select("td");
-            Proxy currentProxy = new AnnotationConfigApplicationContext().getBean(Proxy.class);
+            Proxy currentProxy = new Proxy(); // TODO переделать на бины Spring
             int columnNumber = 0;
             for (Element column : columns) {
                 if (columnNumber == 1) {
@@ -91,7 +97,7 @@ public class AdvancedNameParser implements ProxyParser {
                     Elements links = column.select("a");
                     addTypesToProxy(currentProxy, links);
                 }
-            columnNumber++;
+                columnNumber++;
             }
             res.add(currentProxy);
         }

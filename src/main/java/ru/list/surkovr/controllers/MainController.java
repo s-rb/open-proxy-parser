@@ -13,7 +13,7 @@ import java.util.Set;
 @Controller
 public class MainController {
 
-    private ProxyService proxyService;
+    private final ProxyService proxyService;
 
     @Autowired
     public MainController(ProxyService proxyService) {
@@ -25,16 +25,19 @@ public class MainController {
         addProxiesToModel("all", model);
         return "index";
     }
+
     @GetMapping("/socks")
     public String socksPage(Model model) {
         addProxiesToModel("socks", model);
         return "socks";
     }
+
     @GetMapping("/http")
     public String httpPage(Model model) {
         addProxiesToModel("http", model);
         return "http";
     }
+
     @GetMapping("/https")
     public String httpsPage(Model model) {
         addProxiesToModel("https", model);

@@ -3,12 +3,12 @@ package ru.list.surkovr.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.list.surkovr.util.Util;
 import ru.list.surkovr.model.Proxy;
 import ru.list.surkovr.model.ProxyType;
 import ru.list.surkovr.services.interfaces.ProxyParser;
 import ru.list.surkovr.services.interfaces.ProxyPinger;
 import ru.list.surkovr.services.interfaces.ProxyService;
+import ru.list.surkovr.util.Util;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;

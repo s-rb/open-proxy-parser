@@ -1,9 +1,9 @@
 package ru.list.surkovr.services;
 
 import org.springframework.stereotype.Component;
-import ru.list.surkovr.util.Util;
 import ru.list.surkovr.model.Proxy;
 import ru.list.surkovr.services.interfaces.ProxyPinger;
+import ru.list.surkovr.util.Util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

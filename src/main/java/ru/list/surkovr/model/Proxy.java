@@ -1,14 +1,9 @@
 package ru.list.surkovr.model;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-@Component
-@Scope("prototype")
 public class Proxy {
 
     private List<ProxyType> types = new LinkedList<ProxyType>();
