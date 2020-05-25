@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>OPEN PROXIES PARSER AND CHECKER</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <div th:replace="~{navigation :: navigation(HTTPS)}"/>
+    <h1 class="display-4" align="center">HTTPS PROXIES</h1>
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <td>HOST</td>
+            <td>PORT</td>
+            <td>TIMEOUT</td>
+            <td>TYPE</td>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="prox : ${httpsProxies}">
+            <td th:text="${prox.getHost()}"/>
+            <td th:text="${prox.getPort()}"/>
+            <td th:text="${prox.getTimeout()}"/>
+            <td>
+                <a th:each="proxType : ${prox.getTypes()}" class="btn btn-primary" type="button"><p th:text="${proxType.toString()}"></p></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
