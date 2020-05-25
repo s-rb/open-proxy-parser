@@ -52,7 +52,7 @@ public class ProxyServiceImpl implements ProxyService {
     }
 
     private Set<Proxy> getFilteredProxies(Predicate<? super Proxy> predicate) {
-        return Collections.unmodifiableSet(proxies).parallelStream()
+        return Collections.unmodifiableSet(proxies).stream()
                 .filter(predicate)
                 .sorted((p1, p2) -> p2.getTimeout() != 0 ? p1.getTimeout() - p2.getTimeout() : -1)
                 .collect(Collectors.toCollection(LinkedHashSet::new));

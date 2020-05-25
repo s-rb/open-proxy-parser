@@ -45,9 +45,9 @@ public class ProxyPingerImpl implements ProxyPinger {
             assert currentProxy != null;
             long currentTime = System.nanoTime();
             if (!isReachable(currentProxy)) throw new InterruptedException("Proxy isn't reachable");
-            long pingMs = (System.nanoTime() - currentTime) / 1000;
+            int pingMs = (int) (System.nanoTime() - currentTime) / 1000_000;
             if (pingMs <= 0) throw new InterruptedException("Ping <= 0");
-            currentProxy.setTimeout((int) pingMs);
+            currentProxy.setTimeout(pingMs);
             if (!Thread.currentThread().isInterrupted()) resultProxies.add(currentProxy);
             return null;
         };
