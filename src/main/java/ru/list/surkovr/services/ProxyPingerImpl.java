@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -44,37 +43,14 @@ public class ProxyPingerImpl implements ProxyPinger {
         return () -> {
             Proxy currentProxy = proxyQueue.poll();
             assert currentProxy != null;
+            long currentTime = System.nanoTime();
             if (!isReachable(currentProxy)) throw new InterruptedException("Proxy isn't reachable");
-            currentProxy.setValid(true);
-            try {
-                int pingMs = Integer.parseInt(Objects.requireNonNull(
-                        pingProxy(currentProxy)));
-                if (pingMs <= 0) throw new InterruptedException("Ping <= 0");
-                currentProxy.setTimeout(pingMs);
-            } catch (NumberFormatException | NullPointerException e) {
-                throw new InterruptedException("Couldn't ping proxy");
-            }
+            long pingMs = (System.nanoTime() - currentTime) / 1000;
+            if (pingMs <= 0) throw new InterruptedException("Ping <= 0");
+            currentProxy.setTimeout((int) pingMs);
             if (!Thread.currentThread().isInterrupted()) resultProxies.add(currentProxy);
             return null;
         };
-    }
-
-    private String pingProxy(Proxy currentProxy) {
-        try {
-            Process p = Runtime.getRuntime().exec("ping " + currentProxy.getHost());
-            BufferedReader inputStream = new BufferedReader(
-                    new InputStreamReader(p.getInputStream()));
-            StringBuilder builder = new StringBuilder();
-            String s = "";
-            while ((s = inputStream.readLine()) != null) builder.append(s);
-            String res = builder.toString().trim();
-            inputStream.close();
-            return res.substring(res.length() - 7, res.length() - 2)
-                    .replaceAll("=", "").trim();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private boolean isReachable(Proxy proxy) {

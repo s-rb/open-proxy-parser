@@ -69,15 +69,12 @@ public class AdvancedNameParser implements ProxyParser {
     }
 
     private Document getDocument(String url) throws IOException {
-        WebClient webClient = initializeClient();
-        try {
+        try (WebClient webClient = initializeClient();) {
             HtmlPage htmlPage = webClient.getPage(url);
             String html = htmlPage.asXml();
             htmlPage.cleanUp();
             return Jsoup.parse(html);
         } finally {
-            webClient.getCurrentWindow().getJobManager().removeAllJobs();
-            webClient.close();
             System.gc();
         }
     }
