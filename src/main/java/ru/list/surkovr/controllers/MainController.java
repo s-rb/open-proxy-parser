@@ -59,7 +59,7 @@ public class MainController {
                 proxies = proxyService.getHttpsProxies();
                 model.addAttribute("httpsProxies", proxies);
                 break;
-            default:
+            case ("all"):
                 proxies = proxyService.getAllProxies();
                 model.addAttribute("allProxies", proxies);
                 break;
@@ -68,8 +68,7 @@ public class MainController {
 
     @RequestMapping("/")
     public String indexPage(Model model) {
-        Set<Proxy> socksProxies = proxyService.getSocksProxies();
-        model.addAttribute("socksProxies", socksProxies);
+        addProxiesToModel("all", model);
         return "index"; // имя страницы, которую возвращаем
     }
 }
